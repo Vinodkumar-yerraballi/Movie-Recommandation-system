@@ -1,8 +1,11 @@
 import pandas as pd
 import streamlit as st
+import numpy as np
 import pickle
 import requests
 import base64
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 
@@ -63,10 +66,11 @@ def recommend(movie):
     return recommended_movies, recommended_movies_posters
 
 
-movies_dict = pickle.load(open('movie_dict1.pkl', 'rb'))
-movies = pd.DataFrame(movies_dict)
+movies=pd.read_csv('final_data.csv')
+cv=CountVectorizer(stop_words='english')
+vectors=cv.fit_transform(movies['soup']).toarray()
 
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+similarity =cosine_similarity(vectors)
 selected_movie_name = st.selectbox(
     'How would you like to be contacted?',
     movies['title'].values
