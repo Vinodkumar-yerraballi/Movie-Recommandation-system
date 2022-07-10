@@ -1,9 +1,13 @@
+
+import base64
+
 import pandas as pd
 import streamlit as st
 import numpy as np
 import pickle
 import requests
 import base64
+import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -16,10 +20,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+@st.cache(persist=True, show_spinner=False)
+def get_movies():
+    movies = pd.read_csv('final_data.csv')
+    return movies
 
+
+@st.cache(persist=True, show_spinner=False)
+def get_similarity(movies):
+    cv = CountVectorizer(stop_words='english')
+    vectors = cv.fit_transform(movies['soup']).toarray()
+    similarity = cosine_similarity(vectors)
+    return similarity
 
 # Set background of api
 
+@st.cache(persist=True, show_spinner=False)
 def get_base64(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
@@ -27,6 +43,8 @@ def get_base64(bin_file):
 
 
 def set_background(png_file):
+@st.cache(persist=True, show_spinner=False)
+def get_background(png_file):
     bin_str = get_base64(png_file)
     page_bg_img = '''
     <style>
@@ -38,13 +56,20 @@ def set_background(png_file):
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 set_background('movie.png')
+    return page_bg_img
 
 st.title('Movie recommendation system')
 
+@st.cache(persist=True, show_spinner=False)
+def set_background(page_bg_img):
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
 
+@st.cache(persist=True, show_spinner=False)
 def fetch_poster(movie_id):
     response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=020b311fe0559698373a16008dc6a672&language=en-US'.format(movie_id))
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=020b311fe0559698373a16008dc6a672&language=en-US')
     data = response.json()
     return "https://image.tmdb.org/t/p/w500/" + data['poster_path']
 
@@ -52,10 +77,13 @@ def fetch_poster(movie_id):
 
 
 
+@st.cache(persist=True, show_spinner=False)
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
     movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:9]
+    movies_list = sorted(list(enumerate(distances)),
+                        reverse=True, key=lambda x: x[1])[1:9]
 
     recommended_movies = []
     recommended_movies_posters = []
@@ -69,6 +97,11 @@ def recommend(movie):
 movies=pd.read_csv('final_data.csv')
 cv=CountVectorizer(stop_words='english')
 vectors=cv.fit_transform(movies['soup']).toarray()
+movies = get_movies()
+similarity = get_similarity(movies)
+page_bg_img = get_background('movie.png')
+st.markdown(page_bg_img, unsafe_allow_html=True)
+st.title('Movie recommendation system')
 
 similarity =cosine_similarity(vectors)
 selected_movie_name = st.selectbox(
@@ -79,6 +112,7 @@ selected_movie_name = st.selectbox(
 if st.button('Recommend'):
     recommended_movies, recommended_movies_posters=recommend(selected_movie_name)
 
+    recommended_movies, recommended_movies_posters = recommend(selected_movie_name)
 
     col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
     with col1:
