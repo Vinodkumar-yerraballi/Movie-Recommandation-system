@@ -93,7 +93,6 @@ cv=CountVectorizer(stop_words='english')
 vectors=cv.fit_transform(movies['soup']).toarray()
 movies = get_movies()
 similarity = get_similarity(movies)
-page_bg_img = get_background('movie.png')
 st.markdown(page_bg_img, unsafe_allow_html=True)
 st.title('Movie recommendation system')
 
