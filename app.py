@@ -42,7 +42,7 @@ def get_base64(bin_file):
     return base64.b64encode(data).decode()
 
 
-def set_background(png_file):
+
 @st.cache(persist=True, show_spinner=False)
 def get_background(png_file):
     bin_str = get_base64(png_file)
