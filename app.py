@@ -49,11 +49,6 @@ def get_background(png_file):
 
 
 @st.cache(persist=True, show_spinner=False)
-def set_background(page_bg_img):
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-
-@st.cache(persist=True, show_spinner=False)
 def fetch_poster(movie_id):
     response = requests.get(
         f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=020b311fe0559698373a16008dc6a672&language=en-US')
@@ -80,6 +75,7 @@ def recommend(movie):
 movies = get_movies()
 similarity = get_similarity(movies)
 page_bg_img = get_background('movie.png')
+
 st.markdown(page_bg_img, unsafe_allow_html=True)
 st.title('Movie recommendation system')
 
