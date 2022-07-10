@@ -56,7 +56,7 @@ def get_background(png_file):
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 set_background('movie.png')
-    return page_bg_img
+return page_bg_img
 
 st.title('Movie recommendation system')
 
