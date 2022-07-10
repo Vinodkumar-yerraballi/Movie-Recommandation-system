@@ -93,8 +93,6 @@ cv=CountVectorizer(stop_words='english')
 vectors=cv.fit_transform(movies['soup']).toarray()
 movies = get_movies()
 similarity = get_similarity(movies)
-st.markdown(page_bg_img, unsafe_allow_html=True)
-st.title('Movie recommendation system')
 
 similarity =cosine_similarity(vectors)
 selected_movie_name = st.selectbox(
