@@ -44,7 +44,7 @@ def get_base64(bin_file):
 
 
 @st.cache(persist=True, show_spinner=False)
-def get_background(png_file):
+def set_background(png_file):
     bin_str = get_base64(png_file)
     page_bg_img = '''
     <style>
@@ -56,15 +56,9 @@ def get_background(png_file):
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 set_background('movie.png')
-  
 
 st.title('Movie recommendation system')
-
-@st.cache(persist=True, show_spinner=False)
-def set_background(page_bg_img):
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-
+ 
 @st.cache(persist=True, show_spinner=False)
 def fetch_poster(movie_id):
     response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=020b311fe0559698373a16008dc6a672&language=en-US'.format(movie_id))
